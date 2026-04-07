@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-gray-200 font-sans antialiased;
+  }
+}
+
+@layer utilities {
+  .varko-glass {
+    @apply bg-[#111116] backdrop-blur-xl border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)];
+  }
+  .varko-pill {
+    @apply inline-flex items-center bg-white/5 border border-white/10 rounded-full px-4 py-1 text-sm font-medium text-gray-400;
+  }
+  .varko-badge {
+    @apply bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border border-purple-500/30 mr-2;
+  }
+  .varko-gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-[#a855f7] via-[#a855f7] to-[#60a5fa];
+  }
+  .varko-border-gradient {
+    @apply border-2 border-transparent bg-origin-border bg-clip-content;
+  }
+  .varko-glow-purple {
+    @apply shadow-[0_0_30px_rgba(139,92,246,0.1)];
+  }
+  .varko-glow-blue {
+    @apply shadow-[0_0_30px_rgba(59,130,246,0.1)];
+  }
+}
+
+.bg-varko-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}

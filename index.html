@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibesec - Built for modern developers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-base: #08070b;
+            --bg-card: #111116;
+            --border-muted: rgba(255, 255, 255, 0.06);
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --accent-purple: #8b5cf6;
+            --accent-blue: #3b82f6;
+            --gradient-text: linear-gradient(135deg, #a855f7, #60a5fa);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% -20%, rgba(139, 92, 246, 0.12) 0%, transparent 60%),
+                radial-gradient(circle at 50% 120%, rgba(59, 130, 246, 0.08) 0%, transparent 60%);
+        }
+
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+        section {
+            padding: 100px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Nav */
+        header {
+            position: fixed; top: 0; left: 0; right: 0;
+            background-color: rgba(8, 7, 11, 0.8);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            z-index: 100; border-bottom: 1px solid transparent; transition: border-color 0.3s ease;
+        }
+        header.scrolled { border-bottom: 1px solid var(--border-muted); }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.25rem; }
+        .logo i { color: var(--accent-purple); }
+        .nav-links { display: flex; gap: 32px; font-size: 0.95rem; font-weight: 500; color: var(--text-muted); }
+        .nav-links a:hover { color: white; }
+        .btn-ghost { color: var(--text-main); font-weight: 500; font-size: 0.95rem; padding: 8px 16px; border-radius: 6px; transition: background 0.2s; }
+        .btn-ghost:hover { background-color: rgba(255, 255, 255, 0.05); }
+
+        /* Buttons & Badges */
+        .btn-primary {
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            color: white; font-weight: 500; padding: 12px 28px; border-radius: 8px; font-size: 1rem;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.2); transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(124, 58, 237, 0.4); }
+
+        .pill {
+            display: inline-flex; align-items: center;
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border-muted);
+            border-radius: 100px; padding: 4px 16px 4px 4px; font-size: 0.875rem; font-weight: 500;
+            margin-bottom: 32px; color: var(--text-muted);
+        }
+        .pill .badge {
+            background: rgba(139, 92, 246, 0.2); color: #c4b5fd;
+            padding: 2px 10px; border-radius: 100px; margin-right: 12px; font-weight: 600;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .gradient-text {
+            background: var(--gradient-text); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        /* Hero */
+        .hero { text-align: center; padding-top: 180px; padding-bottom: 80px; display: flex; flex-direction: column; align-items: center; }
+        .hero h1 { font-size: 4.5rem; line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 24px; max-width: 900px; }
+        .hero p { font-size: 1.25rem; color: var(--text-muted); max-width: 650px; margin-bottom: 40px; }
+        
+        .email-form { display: flex; background: rgba(255,255,255,0.02); border: 1px solid var(--border-muted); border-radius: 12px; padding: 8px; width: 480px; margin: 0 auto; transition: border-color 0.3s; position: relative; z-index: 10; }
+        .email-form:focus-within { border-color: rgba(139, 92, 246, 0.4); box-shadow: 0 0 30px rgba(139, 92, 246, 0.1); }
+        .email-form input { flex: 1; background: transparent; border: none; outline: none; padding: 0 16px; color: white; font-size: 1rem; }
+        .email-form input::placeholder { color: rgba(255,255,255,0.3); }
+
+        /* Problem Section */
+        .problem-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding-top: 60px; }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-muted);
+            border-radius: 16px; padding: 32px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+            position: relative; overflow: hidden;
+            transition: all 0.3s;
+        }
+        .stat-card:hover { border-color: rgba(139, 92, 246, 0.3); transform: translateY(-4px); }
+        .stat-value { font-size: 1.25rem; font-weight: 600; color: white; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
+        .stat-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+        /* Integration Section */
+        .integration-section { text-align: center; padding: 120px 24px; position: relative; }
+        .integration-section h2 { font-size: 3.5rem; font-weight: 700; margin-bottom: 24px; line-height: 1.1; letter-spacing: -0.02em; }
+        .integration-section p { color: var(--text-muted); max-width: 600px; margin: 0 auto; font-size: 1.125rem; margin-bottom: 80px; }
+        
+        .github-visual { 
+            position: relative; height: 160px; display: flex; align-items: center; justify-content: center; 
+            max-width: 800px; margin: 0 auto;
+        }
+        .connection-lines { position: absolute; z-index: 1; width: 100%; height: 100%; top: 0; left: 0; opacity: 0.5; }
+        
+        .github-icon-large {
+            width: 80px; height: 80px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+            position: relative; z-index: 2;
+        }
+
+        /* Features */
+        .section-header { text-align: center; margin-bottom: 64px; }
+        .section-header h2 { font-size: 3rem; font-weight: 700; margin-bottom: 24px; line-height: 1.2; letter-spacing: -0.02em;}
+        
+        .grid-2x3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .capability-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-muted);
+            border-radius: 16px; padding: 40px 32px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+            transition: all 0.3s;
+        }
+        .capability-card:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.3);
+            transform: translateY(-4px);
+        }
+
+        .icon-wrapper {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 64px; height: 64px; border-radius: 16px;
+            background: rgba(255,255,255,0.02); color: #c4b5fd;
+            margin-bottom: 32px; border: 1px solid var(--border-muted);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        .capability-card h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 12px; color: white; }
+        .capability-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+        /* Footer / CTA */
+        .cta-section { text-align: center; padding: 120px 24px; display: flex; flex-direction: column; align-items: center;}
+        .cta-section h2 { font-size: 3.5rem; font-weight: 700; margin-bottom: 24px; letter-spacing: -0.02em; }
+        
+        footer { border-top: 1px solid var(--border-muted); padding: 40px 24px; text-align: center; color: var(--text-muted); font-size: 0.875rem; }
+
+        @media (max-width: 900px) {
+            .hero h1 { font-size: 3rem; }
+            .integration-section h2, .cta-section h2 { font-size: 2.5rem; }
+            .problem-section, .grid-2x3 { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            .email-form { width: 100%; flex-direction: column; background: transparent; border: none; gap: 12px; }
+            .email-form input { background: rgba(255,255,255,0.05); border: 1px solid var(--border-muted); border-radius: 8px; padding: 16px; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i data-lucide="shield-check"></i>
+                Vibesec
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#integrations">Integrations</a>
+                <a href="#pricing">Pricing</a>
+            </div>
+            <div style="display: flex; gap: 16px; align-items: center;">
+                <button class="btn-ghost">Log In</button>
+                <button class="btn-primary" onclick="scrollToCta()" style="padding: 8px 16px;">Sign Up</button>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="pill">
+            <span class="badge">Vibesec</span> Next-Gen Security Experience.
+        </div>
+        <h1>Helping Teams Build Better<br><span class="gradient-text">Software & Solutions</span></h1>
+        <p>Build, launch, and scale your SaaS faster with a platform designed for modern teams. Secure code at the speed of thought.</p>
+        
+        <form class="email-form" id="access-form" onsubmit="handleFormSubmit(event)">
+            <input type="email" placeholder="Email Address" required>
+            <button type="submit" class="btn-primary">Get Started</button>
+        </form>
+        <div id="success-message" style="display:none; color: #a855f7; margin-top: 16px; font-weight: 500;">
+            Thanks for joining! We'll be in touch.
+        </div>
+    </section>
+
+    <section class="problem-section">
+        <div class="stat-card">
+            <div class="stat-value">
+                <i data-lucide="zap" style="color: var(--accent-purple); margin-right: 8px;"></i> Rapid Deployment
+            </div>
+            <p>Modern development relies on AI and scaffolding, which often outpaces traditional, slower security reviews.</p>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">
+                <i data-lucide="alert-triangle" style="color: var(--accent-purple); margin-right: 8px;"></i> Configuration Slips
+            </div>
+            <p>Fast iterations can occasionally leave behind loose configurations, exposed tokens, or untested auth patterns.</p>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">
+                <i data-lucide="bot" style="color: var(--accent-purple); margin-right: 8px;"></i> Automated Scanning
+            </div>
+            <p>Public repositories are continuously scanned by bots, meaning vulnerabilities are often discovered shortly after.</p>
+        </div>
+    </section>
+
+    <section class="integration-section" id="integrations">
+        <div class="pill">
+            <span class="badge">Integrations</span> Seamless Integrations
+        </div>
+        <h2>Easily Functions With GitHub<br>For Smarter <span class="gradient-text">Automation</span></h2>
+        <p>Connect your repositories in just a few clicks. Vibesec interprets code directly out of your version control, ensuring smooth data flow without disrupting developers.</p>
+        
+        <div class="github-visual">
+            <svg class="connection-lines" viewBox="0 0 800 160" preserveAspectRatio="none">
+                <path d="M50 80 Q 400 160 750 80" fill="none" stroke="url(#grad1)" stroke-width="2" />
+                <path d="M150 80 Q 400 130 650 80" fill="none" stroke="url(#grad2)" stroke-width="1.5" />
+                <defs>
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="rgba(139, 92, 246, 0)" />
+                        <stop offset="50%" stop-color="rgba(139, 92, 246, 0.8)" />
+                        <stop offset="100%" stop-color="rgba(139, 92, 246, 0)" />
+                    </linearGradient>
+                    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="rgba(59, 130, 246, 0)" />
+                        <stop offset="50%" stop-color="rgba(59, 130, 246, 0.6)" />
+                        <stop offset="100%" stop-color="rgba(59, 130, 246, 0)" />
+                    </linearGradient>
+                </defs>
+            </svg>
+            <div class="github-icon-large">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section id="features">
+        <div class="section-header">
+            <div class="pill">
+                <span class="badge">Features</span> Simple. Smart. Scalable.
+            </div>
+            <h2>Advanced Features, Simple Experience<br>Built For Speed And Scale</h2>
+            <p style="color: var(--text-muted); max-width: 750px; margin: 0 auto;">Powered by modern cloud technology, our SaaS platform combines speed, security and scalability. Each feature is thoughtfully engineered to deliver reliable performance.</p>
+        </div>
+        
+        <div class="grid-2x3">
+            <div class="capability-card">
+                <div class="icon-wrapper">
+                    <i data-lucide="cpu"></i>
+                </div>
+                <h3>Automated Scans</h3>
+                <p>Save time and eliminate repetitive tasks. Our AI-driven system analyzes code logic natively to uncover risks immediately.</p>
+            </div>
+            <div class="capability-card">
+                <div class="icon-wrapper">
+                    <i data-lucide="database"></i>
+                </div>
+                <h3>SQL Guardrails</h3>
+                <p>Real-time analytics provide instant visibility into unsafe database query patterns and unsanitized inputs.</p>
+            </div>
+            <div class="capability-card">
+                <div class="icon-wrapper">
+                    <i data-lucide="key"></i>
+                </div>
+                <h3>Exposed Secrets</h3>
+                <p>Our intelligent data integration scans every file to find hardcoded API keys, ensuring a unified security posture.</p>
+            </div>
+            <div class="capability-card">
+                <div class="icon-wrapper">
+                    <i data-lucide="lock"></i>
+                </div>
+                <h3>Auth Confidence</h3>
+                <p>Make confident decisions backed by data. We flag broken authentication patterns and insecure session handling.</p>
+            </div>
+            <div class="capability-card">
+                <div class="icon-wrapper">
+                    <i data-lucide="eye-off"></i>
+                </div>
+                <h3>IDOR Detection</h3>
+                <p>Our platform tracks endpoints and request patterns to provide actionable alerts against unauthorized access routing.</p>
+            </div>
+            <div class="capability-card">
+                <div class="icon-wrapper">
+                    <i data-lucide="sparkles"></i>
+                </div>
+                <h3>AI-Powered Fixes</h3>
+                <p>Generate a precise, context-aware before-and-after code fix for every single issue it finds, in seconds.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="cta-section" id="request-access">
+        <div class="pill">
+            <span class="badge">Our Story</span> From Vision To Reality
+        </div>
+        <h2>Scalable Packages For Every Stage</h2>
+        <p style="color: var(--text-muted); margin-bottom: 40px; max-width: 500px;">We have a plan that fits your needs. Each package includes powerful automated tools.</p>
+        <button class="btn-primary" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Get Started Now</button>
+    </div>
+
+    <footer>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 8px; font-weight: 700; font-size: 1.25rem; color: white; margin-bottom: 24px;">
+            <i data-lucide="shield-check" style="color: var(--accent-purple);"></i>
+            Vibesec
+        </div>
+        &copy; <script>document.write(new Date().getFullYear())</script> Vibesec. All rights reserved.
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        function scrollToCta() {
+            document.getElementById('request-access').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            document.querySelector('.email-form').style.display = 'none';
+            document.getElementById('success-message').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
