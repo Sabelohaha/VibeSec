@@ -11,7 +11,7 @@ import { FixModal } from './components/FixModal';
 import { X } from 'lucide-react';
 import { AuthModal, NavBar } from './components/AuthModal';
 import { supabase } from './services/supabase';
-import { submitScan, pollScan } from './services/api';
+import { submitScan, submitWebsiteScan, pollScan } from './services/api';
 import type { Vulnerability, ScanResult } from './types';
 import './index.css';
 
@@ -46,10 +46,10 @@ function App() {
     }
   }, [error]);
 
-  const handleStartScan = async (url: string) => {
+  const handleStartScan = async (url: string, mode: 'repo' | 'website' = 'repo') => {
     try {
       setError(null);
-      const { scan_id } = await submitScan(url);
+      const { scan_id } = mode === 'repo' ? await submitScan(url) : await submitWebsiteScan(url);
       setScanId(scan_id);
       setView('scanning');
     } catch (err: any) {

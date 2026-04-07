@@ -1,8 +1,46 @@
 import { Request, Response, NextFunction } from 'express';
 import { supabaseAdmin } from '../config/supabase';
 import { GitHubScannerService } from '../services/githubScanner';
+import { WebsiteScannerService } from '../services/websiteScanner';
 
 const scannerService = new GitHubScannerService();
+const websiteScanner = new WebsiteScannerService();
+
+export const createWebsiteScan = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { url } = req.body;
+    const userId = req.user?.id || null;
+
+    if (!url) return res.status(400).json({ error: 'url is required' });
+
+    // 1. Create scan record
+    const { data: scan, error } = await supabaseAdmin.from('scans').insert({
+      user_id: userId,
+      repo_url: url,
+      repo_name: new URL(url).hostname,
+      status: 'scanning'
+    }).select().single();
+
+    if (error || !scan) throw error;
+
+    // 2. Run Audit immediately (Synchronous for now or handle via polling)
+    const vulnerabilities = await websiteScanner.runAudit(url);
+    
+    // 3. Batch insert vulnerabilities
+    if (vulnerabilities.length > 0) {
+      await supabaseAdmin.from('vulnerabilities').insert(
+        vulnerabilities.map(v => ({ ...v, scan_id: scan.id }))
+      );
+    }
+
+    // 4. Finalize scan status
+    await supabaseAdmin.from('scans').update({ status: 'complete' }).eq('id', scan.id);
+
+    return res.status(200).json({ scan_id: scan.id, status: 'complete' });
+  } catch (err) {
+    next(err);
+  }
+};
 
 export const createScan = async (req: Request, res: Response, next: NextFunction) => {
   try {

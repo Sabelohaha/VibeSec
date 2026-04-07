@@ -13,11 +13,19 @@ import {
   LayoutDashboard,
   Box,
   Terminal,
-  Search
+  Search,
+  Globe,
+  Mail,
+  Lock,
+  Database,
+  FileText,
+  Fingerprint,
+  Hash,
+  Binary
 } from 'lucide-react';
 
 interface AdvancedProductDashboardProps {
-  onStartScan: (url: string) => void;
+  onStartScan: (url: string, mode?: 'repo' | 'website') => void;
   onLoadScan: (id: string) => void;
   user: any;
   cooldown?: number;
@@ -29,6 +37,7 @@ export const AdvancedProductDashboard = ({ onStartScan, onLoadScan, user, cooldo
   const [loading, setLoading] = useState(true);
   const [activeView, setActiveView] = useState<'dashboard' | 'fixes' | 'history' | 'settings'>('dashboard');
   const [newScanUrl, setNewScanUrl] = useState('');
+  const [scanMode, setScanMode] = useState<'repo' | 'website'>('repo');
 
   const isPro = user.app_metadata?.tier === 'pro' || user.user_metadata?.is_pro || false;
 
@@ -58,25 +67,42 @@ export const AdvancedProductDashboard = ({ onStartScan, onLoadScan, user, cooldo
                 </p>
             </div>
             
-            <form 
-              onSubmit={(e) => { e.preventDefault(); if (newScanUrl) onStartScan(newScanUrl); }}
-              className="flex items-center gap-3 bg-[#0c0c12] border border-white/5 focus-within:border-purple-500/40 rounded-2xl p-2 pl-6 transition-all shadow-inner w-full md:w-[480px]"
-            >
-              <GitBranch className="text-purple-400/50" size={20} />
-              <input 
-                type="text" 
-                placeholder="https://github.com/varkohq/core-infra"
-                value={newScanUrl}
-                onChange={(e) => setNewScanUrl(e.target.value)}
-                className="flex-1 bg-transparent border-none text-sm text-white focus:outline-none placeholder:text-gray-700 font-mono"
-              />
-              <button 
-                type="submit"
-                className="bg-purple-600 hover:bg-purple-500 p-3 rounded-xl transition-all shadow-lg active:scale-95"
+            <div className="flex flex-col gap-3 w-full md:w-[480px]">
+              <div className="flex bg-[#0c0c12] p-1 rounded-xl border border-white/5 w-fit">
+                <button 
+                  onClick={() => setScanMode('repo')}
+                  className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${scanMode === 'repo' ? 'bg-purple-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}
+                >
+                  GitHub Repo
+                </button>
+                <button 
+                  onClick={() => setScanMode('website')}
+                  className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${scanMode === 'website' ? 'bg-purple-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}
+                >
+                  Live Website
+                </button>
+              </div>
+
+              <form 
+                onSubmit={(e) => { e.preventDefault(); if (newScanUrl) onStartScan(newScanUrl, scanMode); }}
+                className="flex items-center gap-3 bg-[#0c0c12] border border-white/5 focus-within:border-purple-500/40 rounded-2xl p-2 pl-6 transition-all shadow-inner w-full"
               >
-                <Plus size={20} className="text-white" />
-              </button>
-            </form>
+                {scanMode === 'repo' ? <GitBranch className="text-purple-400/50" size={20} /> : <Globe className="text-purple-400/50" size={20} />}
+                <input 
+                  type="text" 
+                  placeholder={scanMode === 'repo' ? "https://github.com/varkohq/core-infra" : "https://getvibesec.com"}
+                  value={newScanUrl}
+                  onChange={(e) => setNewScanUrl(e.target.value)}
+                  className="flex-1 bg-transparent border-none text-sm text-white focus:outline-none placeholder:text-gray-700 font-mono"
+                />
+                <button 
+                  type="submit"
+                  className="bg-purple-600 hover:bg-purple-500 p-3 rounded-xl transition-all shadow-lg active:scale-95"
+                >
+                  <Plus size={20} className="text-white" />
+                </button>
+              </form>
+            </div>
         </div>
 
         {/* Stats Grid */}
@@ -97,6 +123,45 @@ export const AdvancedProductDashboard = ({ onStartScan, onLoadScan, user, cooldo
                     <p className="text-2xl font-black text-white tracking-widest">{stat.value}</p>
                 </div>
             ))}
+        </div>
+        {/* Tool Lab Grid */}
+        <div className="mb-12">
+            <div className="flex items-center gap-6 border-b border-white/5 mb-8 pb-4">
+                <span className="text-sm font-bold text-white relative">
+                    Security Lab Tools
+                    <div className="absolute bottom-[-17px] left-0 w-4/5 h-[2px] bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
+                </span>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                    { title: 'SSL Certificate Checker', icon: Lock, desc: 'Check validity, expiry, and TLS protocol health.', color: 'text-green-400' },
+                    { title: 'Email Security Checker', icon: Mail, desc: 'Audit SPF, DMARC, and MX record hardening.', color: 'text-blue-400' },
+                    { title: 'Password Strength', icon: Fingerprint, desc: 'Analyze password entropy 100% client-side.', color: 'text-purple-400' },
+                    { title: 'Cloud Config Auditor', icon: Database, desc: 'Identify exposed Supabase or Firebase tables.', color: 'text-orange-400' },
+                    { title: 'DNS Security Audit', icon: Globe, desc: 'Verify CAA records and DNSSEC configuration.', color: 'text-indigo-400' },
+                    { title: 'security.txt Validator', icon: FileText, desc: 'Ensure responsible disclosure paths exist.', color: 'text-emerald-400' },
+                    { title: 'SRI Hash Generator', icon: Fingerprint, desc: 'Secure CDN scripts with integrity hashes.', color: 'text-pink-400' },
+                    { title: 'Hash Matrix', icon: Hash, desc: 'MD5, SHA-256, and SHA-512 generator.', color: 'text-yellow-400' },
+                    { title: 'Base64 Decoder', icon: Binary, desc: 'Inspect tokens and encoded web payloads.', color: 'text-gray-400' }
+                ].map((tool, i) => (
+                    <div 
+                        key={i} 
+                        className="varko-glass p-5 rounded-2xl border-white/[0.02] hover:border-purple-500/20 transition-all cursor-pointer group"
+                        onClick={() => {
+                            if (tool.title.includes('SSL') || tool.title.includes('Cloud')) setScanMode('website');
+                        }}
+                    >
+                        <div className="flex items-center gap-4 mb-3">
+                            <div className={`p-2 rounded-lg bg-gray-950 border border-white/5 ${tool.color} group-hover:scale-110 transition-transform`}>
+                                <tool.icon size={18} />
+                            </div>
+                            <h4 className="text-xs font-black text-gray-200 uppercase tracking-widest">{tool.title}</h4>
+                        </div>
+                        <p className="text-[10px] text-gray-500 leading-relaxed font-medium">{tool.desc}</p>
+                    </div>
+                ))}
+            </div>
         </div>
 
         {/* Security Matrix List */}

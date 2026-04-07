@@ -21,6 +21,11 @@ export const submitScan = async (repoUrl: string): Promise<{ scan_id: string; st
   return response.data;
 };
 
+export const submitWebsiteScan = async (url: string): Promise<{ scan_id: string; status: string }> => {
+  const response = await api.post('/api/scan/website', { url });
+  return response.data;
+};
+
 export const pollScan = async (scanId: string): Promise<ScanResult> => {
   const response = await api.get(`/api/scan/${scanId}`);
   return response.data;
