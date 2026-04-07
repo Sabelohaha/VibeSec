@@ -4,10 +4,11 @@ export function detectSqlInjection(filePath: string, content: string): DetectorR
   const results: DetectorResult[] = [];
   const lines = content.split('\n');
 
-  const concatQueryRegex = /(query|execute)\s*\([^)]*\+/i;
-  const dbExecuteConcatRegex = /db\.execute\s*\([^)]*\+/i;
+  const concatQueryRegex = /(query|execute|run|exec|sql|raw)\s*\([^)]*\+/i;
+  const dbExecuteConcatRegex = /db\.(?:execute|query|raw|run)\s*\([^)]*\+/i;
   const unparameterizedWhereRegex = /WHERE.*=.*\+/i;
-  const templateLiteralSqlRegex = /[\`].*(SELECT|INSERT|UPDATE|DELETE|WHERE).*[\$]\{.*\}.*[\`]/i;
+  const templateLiteralSqlRegex = /[\`].*(SELECT|INSERT|UPDATE|DELETE|WHERE).*[\$]\{.*\}.*[\`]/is;
+  const sequelizeRawRegex = /sequelize\.query\s*\(\s*[\`].*[\$]\{.*\}.*[\`]/i;
 
   lines.forEach((line, index) => {
     if (concatQueryRegex.test(line) || dbExecuteConcatRegex.test(line) || unparameterizedWhereRegex.test(line) || templateLiteralSqlRegex.test(line)) {

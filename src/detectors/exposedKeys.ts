@@ -16,13 +16,15 @@ export function detectExposedKeys(filePath: string, content: string): DetectorRe
   }
 
   const secretAssignmentPatterns = [
-    /SUPABASE_KEY\s*=\s*['"][^'"]+['"]/i,
-    /sk-[a-zA-Z0-9]{32,}/,
-    /Bearer\s+[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+/,
-    /api_key\s*=\s*['"][^'"]+['"]/i,
-    /apiKey:\s*['"][^'"]+['"]/i,
-    /SECRET\s*=\s*['"][^'"]+['"]/i,
-    /PASSWORD\s*=\s*['"][^'"]+['"]/i
+    /SUPABASE_KEY\s*[:=]\s*['"][^'"]+['"]/i,
+    /sk_live_[a-zA-Z0-9]{24,}/, // Stripe Live
+    /sk_test_[a-zA-Z0-9]{24,}/, // Stripe Test
+    /AKIA[0-9A-Z]{16}/,           // AWS Access Key ID
+    /(?:SECRET|ACCESS|PASS|AUTH|TOKEN|KEY|PWD|CREDENTIALS).{0,20}[:=]\s*['"][a-zA-Z0-9\/+]{20,}['"]/i, // Generic assignment
+    /Bearer\s+[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+/, // JWT
+    /AC[a-z0-9]{32}/,             // Twilio Account SID
+    /SG\.[a-zA-Z0-9_\-\.]{64}/,   // SendGrid API Key
+    /AIza[0-9A-Za-z-_]{35}/       // Google API Key
   ];
 
   lines.forEach((line, index) => {

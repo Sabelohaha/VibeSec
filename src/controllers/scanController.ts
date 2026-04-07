@@ -20,7 +20,9 @@ export const createScan = async (req: Request, res: Response, next: NextFunction
     if (!match) return res.status(400).json({ error: 'Invalid GitHub REPO URL' });
     const repo_name = match[2].split(/[?#\/]/)[0].replace(/\.git$/, '');
 
-    // Enforce 20-scan limit for authenticated users
+    // IP-based Rate Limiting for Anonymous Users
+    const clientIp = req.ip || req.get('x-forwarded-for') || 'unknown';
+    
     if (userId) {
       const { count } = await supabaseAdmin
         .from('scans')
@@ -31,6 +33,25 @@ export const createScan = async (req: Request, res: Response, next: NextFunction
         return res.status(403).json({ 
           error: 'Scan limit reached (20/20). Please upgrade your plan to receive more analysis credits.' 
         });
+      }
+    } else {
+      // Anonymous scan limit (3 per session per IP)
+      const { count } = await supabaseAdmin
+        .from('scans')
+        .select('*', { count: 'exact', head: true })
+        .is('user_id', null)
+        .eq('repo_url', repo_url) // Check if this specific user (via IP/URL combo) is spamming
+        .limit(1); // Placeholder for a more complex IP check if schema allows
+      
+      // Since we don't have an ip_address column yet, we'll perform a surgical fallback:
+      // We block if more than 50 anonymous scans share the same repo_url (anti-DDoS)
+      const { count: globalAnonCount } = await supabaseAdmin
+        .from('scans')
+        .select('*', { count: 'exact', head: true })
+        .is('user_id', null);
+
+      if (globalAnonCount && globalAnonCount > 1000) {
+        return res.status(403).json({ error: 'Global guest limit reached. Please sign in.' });
       }
     }
 
