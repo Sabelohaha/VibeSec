@@ -13,20 +13,20 @@ import { webhookHandler } from './controllers/stripeController';
 
 const app = express();
 
-app.use(helmet());
-app.use(helmet());
+// 1. Hardened Security Layer
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
+
+// 2. Surgical CORS & Preflight Sequence
 app.use(cors({
-  origin: (origin, callback) => {
-    // Dynamic origin reflection: In production, we'll allow all origins momentarily to resolve the DNS/SSL handshake debug
-    if (!origin || origin.includes('getvibesec.com') || origin.includes('localhost') || origin.includes('vercel.app')) {
-      callback(null, true);
-    } else {
-      callback(null, true); // Fallback to true for the initial production sync
-    }
-  },
+  origin: true, // Dynamically mirror the request origin to satisfy the Handshake
   credentials: true,
   optionsSuccessStatus: 200
 }));
+
+// Explicitly handle preflight for all routes
+app.options('*', cors());
 
 // Stripe Webhook MUST precede express.json() to maintain raw body signature requirements
 app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), webhookHandler);
