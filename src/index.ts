@@ -14,9 +14,18 @@ import { webhookHandler } from './controllers/stripeController';
 const app = express();
 
 app.use(helmet());
+app.use(helmet());
 app.use(cors({
-  origin: ['https://getvibesec.com', 'https://www.getvibesec.com', 'http://localhost:5173'],
-  credentials: true
+  origin: (origin, callback) => {
+    // Dynamic origin reflection: In production, we'll allow all origins momentarily to resolve the DNS/SSL handshake debug
+    if (!origin || origin.includes('getvibesec.com') || origin.includes('localhost') || origin.includes('vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Fallback to true for the initial production sync
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200
 }));
 
 // Stripe Webhook MUST precede express.json() to maintain raw body signature requirements
