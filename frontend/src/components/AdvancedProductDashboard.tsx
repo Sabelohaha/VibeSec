@@ -20,9 +20,10 @@ interface AdvancedProductDashboardProps {
   onStartScan: (url: string) => void;
   onLoadScan: (id: string) => void;
   user: any;
+  cooldown?: number;
 }
 
-export const AdvancedProductDashboard = ({ onStartScan, onLoadScan, user }: AdvancedProductDashboardProps) => {
+export const AdvancedProductDashboard = ({ onStartScan, onLoadScan, user, cooldown }: AdvancedProductDashboardProps) => {
   const [scans, setScans] = useState<any[]>([]);
   const [fixes, setFixes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,7 +53,9 @@ export const AdvancedProductDashboard = ({ onStartScan, onLoadScan, user }: Adva
         <div className="mb-12 flex flex-col md:flex-row justify-between items-end gap-6">
             <div className="space-y-2">
                 <h1 className="text-4xl font-bold text-white tracking-tight">Operation <span className="varko-gradient-text">Matrix</span></h1>
-                <p className="text-gray-500 font-medium font-mono text-sm uppercase tracking-tighter">System Status: Optimized & Ready for deployment</p>
+                <p className="text-gray-500 font-medium font-mono text-sm uppercase tracking-tighter">
+                  System Status: {cooldown && cooldown > 0 ? `Orbital Reentry (${cooldown}s)` : 'Optimized & Ready'}
+                </p>
             </div>
             
             <form 
