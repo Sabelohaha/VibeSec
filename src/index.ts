@@ -21,6 +21,10 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), webho
 
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.json({ status: 'VibeSec API - Operational', system: 'Surgical Security Grid' });
+});
+
 app.use('/api', scanRoutes);
 app.use('/api', fixRoutes);
 app.use('/api/stripe', stripeRoutes);
