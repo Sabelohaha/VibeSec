@@ -9,7 +9,12 @@ export const createScan = async (req: Request, res: Response, next: NextFunction
     const { repo_url } = req.body;
     const userId = req.user?.id || null;
 
-    if (!repo_url) return res.status(400).json({ error: 'repo_url is required' });
+    console.log(`[SCAN_CTL] Incoming scan request: ${repo_url} | User: ${userId || 'Anonymous'}`);
+
+    if (!repo_url) {
+      console.warn(`[SCAN_CTL] Missing repo_url in request payload`);
+      return res.status(400).json({ error: 'repo_url is required' });
+    }
 
     const match = repo_url.match(/github\.com\/([^/]+)\/([^/]+)/);
     if (!match) return res.status(400).json({ error: 'Invalid GitHub REPO URL' });

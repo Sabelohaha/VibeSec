@@ -14,7 +14,10 @@ import { webhookHandler } from './controllers/stripeController';
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: ['https://getvibesec.com', 'https://www.getvibesec.com', 'http://localhost:5173'],
+  credentials: true
+}));
 
 // Stripe Webhook MUST precede express.json() to maintain raw body signature requirements
 app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), webhookHandler);

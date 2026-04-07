@@ -27,6 +27,7 @@ export class GitHubScannerService {
   async runScan(scanId: string, repoUrl: string, userId: string | null) {
     const octokit = this.getOctokit();
     try {
+      console.log(`[SCANNER] Job started for Scan ID: ${scanId} | Repo: ${repoUrl}`);
       await supabaseAdmin.from('scans').update({ status: 'scanning' }).eq('id', scanId);
 
       const match = repoUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
