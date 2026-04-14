@@ -91,14 +91,15 @@ export class GitHubScannerService {
               ...detectRateLimiting(filePath, content)
             ];
 
-            // 2. Surgical Validation Pass (AI Pass)
-            for (const res of heuristicResults) {
+            // 2. Surgical Validation Pass (AI Pass) - Run concurrently to prevent Vercel/Serverless timeouts
+            const validationPromises = heuristicResults.map(async (res) => {
+              const snippet = content.split('\n').slice(Math.max(0, res.line_number - 5), res.line_number + 5).join('\n');
               const validation = await this.validator.validateFinding(
                 { ...res, file_path: filePath } as any, 
-                content.split('\n').slice(Math.max(0, res.line_number - 5), res.line_number + 5).join('\n')
+                snippet
               );
 
-              allVulnerabilities.push({
+              return {
                 scan_id: scanId,
                 type: res.type,
                 severity: res.severity,
@@ -109,8 +110,18 @@ export class GitHubScannerService {
                 general_fix: res.general_fix,
                 is_false_positive: !validation.verified,
                 verification_reason: validation.reason
+              };
+            });
+
+            const validatedResults = await Promise.all(validationPromises);
+            const verifiedVulnerabilities = validatedResults
+              .filter(v => !v.is_false_positive)
+              .map(v => {
+                const { is_false_positive, verification_reason, ...validDbObject } = v;
+                return validDbObject;
               });
-            }
+
+            allVulnerabilities.push(...verifiedVulnerabilities);
           }
         } catch (fileErr: any) {
           console.error(`[SCANNER] Failed to read ${file.path}:`, fileErr.message);
