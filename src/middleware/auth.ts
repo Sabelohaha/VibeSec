@@ -2,11 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import { supabaseAdmin } from '../config/supabase';
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  // Allow unauthenticated access to scan creation and polling
-  if (req.path.startsWith('/scan')) {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) return next();
-  }
 
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {

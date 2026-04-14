@@ -47,6 +47,12 @@ function App() {
   }, [error]);
 
   const handleStartScan = async (url: string, mode: 'repo' | 'website' = 'repo') => {
+    if (!user) {
+      setError("Please create an account or log in to scan.");
+      setIsAuthModalOpen(true);
+      return;
+    }
+    
     try {
       setError(null);
       const { scan_id } = mode === 'repo' ? await submitScan(url) : await submitWebsiteScan(url);
