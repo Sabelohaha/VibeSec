@@ -27,19 +27,44 @@ export function detectExposedKeys(filePath: string, content: string): DetectorRe
     /AIza[0-9A-Za-z-_]{35}/       // Google API Key
   ];
 
+  const devLoginPatterns = [
+    /['"]?(?:email|user|username)['"]?\s*[:=]\s*['"](?:dev|test|admin|demo)@[\w.-]+['"]/i, // Hardcoded dev/test email
+    /['"]?password['"]?\s*[:=]\s*['"](?:password|test|admin|admin123|srmcbj@3|123456)['"]/i, // Hardcoded common/weak/dev passwords
+    /srmcbj@3/ // The specific dev pass
+  ];
+
   lines.forEach((line, index) => {
     // Ignore generic placeholder strings
     if (line.toLowerCase().includes('your_') || line.toLowerCase().includes('example')) return;
+
+    let found = false;
 
     for (const pattern of secretAssignmentPatterns) {
       if (pattern.test(line)) {
         results.push({
           type: 'Exposed Secrets',
           severity: 'Critical',
-          title: 'Hardcoded Secret Detection',
+          title: 'Hardcoded API Key Detection',
           description: 'A hardcoded secret or API key was found in the source code.',
           line_number: index + 1,
           general_fix: 'Remove the hardcoded secret, rotate it, and use environment variables for sensitive configurations.'
+        });
+        found = true;
+        break;
+      }
+    }
+
+    if (found) return;
+
+    for (const pattern of devLoginPatterns) {
+      if (pattern.test(line)) {
+        results.push({
+          type: 'Authentication Flaw',
+          severity: 'High',
+          title: 'Exposed Dev Login Credential',
+          description: 'A hardcoded developer login or test credential was found. Attackers can use this to bypass authentication.',
+          line_number: index + 1,
+          general_fix: 'Remove hardcoded test credentials. Dynamically seed test databases or use temporary injected environment variables in test scopes.'
         });
         break;
       }
