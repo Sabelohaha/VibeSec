@@ -3,10 +3,9 @@ import { useState } from 'react';
 
 interface ProductPageProps {
   onStart: (url: string) => void;
-  user: any;
 }
 
-export const ProductPage = ({ onStart, user }: ProductPageProps) => {
+export const ProductPage = ({ onStart }: ProductPageProps) => {
   const [url, setUrl] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {

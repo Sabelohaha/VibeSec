@@ -133,7 +133,7 @@ function App() {
               cooldown={getCooldownRemaining()}
             />
           ) : (
-            <ProductPage onStart={handleStartScan} user={user} />
+            <ProductPage onStart={handleStartScan} />
           )
         )}
         
