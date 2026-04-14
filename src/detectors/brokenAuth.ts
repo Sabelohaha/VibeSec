@@ -4,8 +4,8 @@ export function detectBrokenAuth(filePath: string, content: string): DetectorRes
   const results: DetectorResult[] = [];
   const lines = content.split('\n');
 
-  const missingJwtRegex = /router\.(get|post|put|delete|patch)\(['"]\/(admin|dashboard|profile|settings|users)['"],\s*(async\s+)?\(req,\s*res\)/i;
-  const hardcodedCredentialsRegex = /(username|password|admin)\s*[:=]\s*['"](admin|password123|123456)['"]/i;
+  const missingJwtRegex = /(?:app|router)\.(get|post|put|delete|patch)\(['"].*\/(admin|dashboard|profile|settings|users)['"],\s*(async\s+)?\(req,\s*res\)/i;
+  const hardcodedCredentialsRegex = /(username|password|email|admin)\s*(?:[:=]|===|==)\s*['"](admin|password123|123456|test.*)['"]/i;
   const localStorageTokenRegex = /localStorage\.setItem\(['"](token|jwt|access_token|session)['"],/i;
 
   lines.forEach((line, index) => {

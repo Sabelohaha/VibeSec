@@ -6,6 +6,7 @@ export function detectIdor(filePath: string, content: string): DetectorResult[] 
 
   const idorRegex = /findById\(\s*req\.params\.id\s*\)/i;
   const fetchMissingScopeRegex = /(find|findOne|update|delete|destroy)\(\{.*req\.params\.id.*\}\)/i;
+  const rawSqlIdorRegex = /(SELECT|UPDATE|DELETE|INSERT)[\s\S]+WHERE.*?(id|_id)\s*(?:=|LIKE)\s*(?:\$\{.*\}|req\.body\..+|req\.query\..+|req\.params\..+|['"]\s*\+\s*[a-zA-Z0-9_]+)/i;
 
   lines.forEach((line, index) => {
     if (idorRegex.test(line)) {
@@ -19,9 +20,9 @@ export function detectIdor(filePath: string, content: string): DetectorResult[] 
       });
     }
 
-    if (fetchMissingScopeRegex.test(line)) {
+    if (fetchMissingScopeRegex.test(line) || rawSqlIdorRegex.test(line)) {
       // Check if user scoping is missing
-      if (!line.includes('user_id') && !line.includes('req.user')) {
+      if (!line.includes('user_id') && !line.includes('req.user') && !line.includes('userId')) {
         results.push({
           type: 'IDOR',
           severity: 'High',

@@ -4,7 +4,7 @@ export function detectRateLimiting(filePath: string, content: string): DetectorR
   const results: DetectorResult[] = [];
   const lines = content.split('\n');
 
-  const authRouteRegex = /app\.(post|put)\(['"]\/(login|register|reset)['"],\s*(async\s+)?\(req/i;
+  const authRouteRegex = /(?:app|router)\.(post|put)\(['"].*\/(login|register|reset|auth)['"],?\s*(async\s+)?\(req/i;
   let hasRateLimitImport = false;
 
   lines.forEach(line => {
