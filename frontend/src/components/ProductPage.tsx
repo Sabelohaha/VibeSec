@@ -73,11 +73,7 @@ export const ProductPage = ({ onStart, user }: ProductPageProps) => {
                 <ShieldCheck size={14} className="text-purple-400" />
                 Authored by Vibesec Intelligence
               </div>
-              {!user && (
-                <div className="text-[10px] font-bold text-gray-600 uppercase tracking-widest bg-white/[0.02] px-3 py-1 rounded-full border border-white/5">
-                  Guest Mode • Limited to 1 scan
-                </div>
-              )}
+
             </div>
           </div>
         </div>
